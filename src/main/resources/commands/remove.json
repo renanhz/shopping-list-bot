@@ -1,0 +1,12 @@
+{
+  "name": "remove",
+  "description": "Remove o item da lista",
+  "options": [
+    {
+      "name": "item",
+      "description": "item da lista a ser removido",
+      "type": 3,
+      "required": true
+    }
+  ]
+}
