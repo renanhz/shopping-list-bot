@@ -29,8 +29,4 @@ public class ShoppinglistBotApplication {
 		return client.getRestClient();
 	}
 
-	@Bean
-	public Logger getLogger() {
-		return LoggerFactory.getLogger(this.getClass());
-	}
 }
