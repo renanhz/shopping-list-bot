@@ -18,7 +18,7 @@ public class SlashCommandListener {
     public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client) {
         commands = slashCommands;
 
-        client.on(ChatInputInteractionEvent.class, this::handle);
+        client.on(ChatInputInteractionEvent.class, this::handle).subscribe();
     }
 
     public Mono<Void> handle(ChatInputInteractionEvent event) {
