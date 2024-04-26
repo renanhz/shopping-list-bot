@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class SlashCommandListener {
 
-    private final List<SlashCommand> commands;
+    private final Collection<SlashCommand> commands;
 
     public SlashCommandListener(List<SlashCommand> slashCommands, GatewayDiscordClient client) {
         commands = slashCommands;
