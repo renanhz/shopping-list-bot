@@ -34,12 +34,7 @@ public class AddCommand implements SlashCommand{
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asLong);
 
-        if (itemQuantity.isPresent()) {
-            reply.append(itemQuantity.get());
-        } else {
-            int MIN_ITEM_QUANTITY = 1;
-            reply.append(MIN_ITEM_QUANTITY);
-        }
+        itemQuantity.ifPresentOrElse(reply::append, () -> reply.append(1));
 
         return e.reply().withContent(reply.toString());
     }
