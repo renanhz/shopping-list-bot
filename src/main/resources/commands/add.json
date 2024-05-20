@@ -11,7 +11,7 @@
     {
       "name": "qtd",
       "description": "Quantidade do item",
-      "type": 4,
+      "type": 3,
       "required": false
     }
   ]
