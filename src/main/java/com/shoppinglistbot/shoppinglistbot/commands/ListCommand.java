@@ -1,10 +1,12 @@
 package com.shoppinglistbot.shoppinglistbot.commands;
 
 import com.shoppinglistbot.shoppinglistbot.model.Item;
+import com.shoppinglistbot.shoppinglistbot.services.ShoppingListService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import reactor.core.publisher.Mono;
@@ -15,6 +17,14 @@ import java.util.List;
 
 @Component
 public class ListCommand implements SlashCommand{
+
+    @Autowired
+    private ShoppingListService shoppingListService;
+
+    public ListCommand(ShoppingListService shoppingListService) {
+        this.shoppingListService = shoppingListService;
+    }
+
     @Override
     public String getName() {
         return "list";
@@ -25,13 +35,7 @@ public class ListCommand implements SlashCommand{
         RestClient httpClient = RestClient.create();
         Long channelId = e.getInteraction().getChannelId().asLong();
 
-        Item[] itemArray = httpClient.get().
-                uri("http://localhost:8081/api/v1/shopping-list/{channelId}", channelId)
-                .retrieve()
-                .toEntity(Item[].class)
-                .getBody();
-
-        List<Item> items = Arrays.asList(itemArray);
+        List<Item> items = shoppingListService.getItems(channelId);
 
         EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.YELLOW)
