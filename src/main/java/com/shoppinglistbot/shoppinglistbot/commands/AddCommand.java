@@ -1,11 +1,13 @@
 package com.shoppinglistbot.shoppinglistbot.commands;
 
 import com.shoppinglistbot.shoppinglistbot.model.Item;
+import com.shoppinglistbot.shoppinglistbot.services.ShoppingListService;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -18,6 +20,14 @@ import java.util.Optional;
 
 @Component
 public class AddCommand implements SlashCommand{
+
+    @Autowired
+    private ShoppingListService shoppingListService;
+
+    public AddCommand(ShoppingListService shoppingListService) {
+        this.shoppingListService = shoppingListService;
+    }
+
     @Override
     public String getName() {
         return "add";
@@ -42,18 +52,7 @@ public class AddCommand implements SlashCommand{
 
         Long channelId = e.getInteraction().getChannelId().asLong();
 
-        String reply = RestClient.create().post()
-                .uri("http://localhost:8081/api/v1/item/{channelId}", channelId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(item)
-                .exchange((request, response) -> {
-                    if (response.getStatusCode().is4xxClientError()) {
-                        return "É preciso criar uma lista antes de adicionar um item, use o comando /new";
-                    } else {
-                        return "Item adicionado: " + itemName + ", Quantidade: " + itemQuantity;
-                    }
-                });
-
+        String reply = shoppingListService.addItem(channelId, item);
 
         return e.deferReply().then(e.editReply(reply).then());
     }
