@@ -1,6 +1,7 @@
 package com.shoppinglistbot.shoppinglistbot.services;
 
 import com.shoppinglistbot.shoppinglistbot.model.Item;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -27,5 +28,21 @@ public class ShoppingListService {
                 .getBody();
 
         return Arrays.asList(itemArray);
+    }
+
+    public String addItem(Long channelId, Item item) {
+        String reply = RestClient.create().post()
+                .uri("http://localhost:8081/api/v1/item/{channelId}", channelId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(item)
+                .exchange((request, response) -> {
+                    if (response.getStatusCode().is4xxClientError()) {
+                        return "É preciso criar uma lista antes de adicionar um item, use o comando /new";
+                    } else {
+                        return "Item adicionado: " + item.name() + ", Quantidade: " + item.quantity();
+                    }
+                });
+
+        return reply;
     }
 }
